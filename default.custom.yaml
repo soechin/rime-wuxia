@@ -1,0 +1,7 @@
+# Rime 全域自訂設定檔
+# 此檔案用於覆蓋 default.yaml 中的預設設定
+# 修改後需要「重新部署」才會生效
+
+patch:
+  schema_list:
+    - schema: wuxia

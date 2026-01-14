@@ -1,0 +1,19 @@
+# Rime 無蝦輸入法字典檔（主檔）
+# 此檔案用於引入其他字典檔
+
+---
+# 字典名稱
+name: wuxia
+# 版本號
+version: "2026.1.1"
+# 詞條排序方式
+# by_weight: 按詞頻高低排序（常用字在前）
+# original: 保持碼表中的原始順序
+sort: original
+
+# 導入其他字典檔
+import_tables:
+  - wuxia.trad
+  - wuxia.tradext
+
+...

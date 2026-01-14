@@ -1,0 +1,207 @@
+# Rime 無蝦輸入法方案設定檔
+
+# ========================================
+# 方案基本資訊
+# ========================================
+schema:
+  # 方案 ID
+  schema_id: wuxia
+  # 顯示名稱
+  name: 無蝦
+  # 版本號
+  version: "2026.1.1"
+  # 作者
+  author:
+    - 制作人
+  # 方案描述
+  description: |
+    蝦米簡化版輸入法
+  # 相依方案
+  dependencies:
+
+# ========================================
+# 功能開關設定
+# ========================================
+# reset: 0 表示預設為關閉，1 表示預設為開啟
+switches:
+  # 中英文切換
+  - name: ascii_mode
+    reset: 0 # 預設為中文模式
+    states: [ 中文, 英文 ]
+  # 全形半形切換
+  - name: full_shape
+    reset: 0 # 預設為半形模式
+    states: [ 半形, 全形 ]
+  # 擴充字集切換
+  - name: extended_charset
+    reset: 0 # 預設不顯示擴充字集
+    states: [ 常用, 擴充 ]
+  # 簡繁轉換
+  - name: simplification
+    reset: 0 # 預設繁體
+    states: [ 繁體, 简体 ]
+
+# ========================================
+# 引擎設定
+# ========================================
+# 定義輸入法的處理流程與各個功能模組
+engine:
+  # ----------------------------------------
+  # 處理器（Processors）
+  # ----------------------------------------
+  # 按照順序處理按鍵事件
+  processors:
+    # 處理英文模式及中英文切換
+    # 當您按 Shift 切換到英文模式時，英文字母會直接上屏
+    - ascii_composer
+    # 按鍵綁定
+    # 允許您自定義快捷鍵，例如用 , . 翻頁
+    - key_binder
+    # 拼寫處理器
+    # 接收您的按鍵，建立編碼緩衝區，顯示底線
+    - speller
+    # 選字處理器
+    # 讓您用 1 2 3 等數字鍵選擇候選字
+    - selector
+    # 導航器
+    # 處理 ← → 方向鍵移動光標
+    - navigator
+    # 快速編輯器
+    # 空格：選字並立即上屏
+    - express_editor
+
+  # ----------------------------------------
+  # 分段器（Segmentors）
+  # ----------------------------------------
+  # 將輸入切分為不同的處理段落
+  segmentors:
+    # 標識英文片段
+    # 在英文模式下，標記輸入為「英文片段」
+    - ascii_segmentor
+    # 匹配器
+    # 配合特定規則（如反查 ;;）標識特殊片段
+    - matcher
+    # 標識常規文字片段
+    # 標記正常的中文輸入為 abc 片段
+    - abc_segmentor
+    # 備用處理器
+    # 處理所有未被其他 segmentor 識別的輸入
+    - fallback_segmentor
+
+  # ----------------------------------------
+  # 翻譯器（Translators）
+  # ----------------------------------------
+  # 將輸入碼轉換為候選字詞
+  translators:
+    # 主翻譯器
+    # 查詢碼表，將您的輸入碼（如 abc）轉換成候選字（如「阿」「啊」「呵」）
+    - table_translator
+
+  # ----------------------------------------
+  # 過濾器（Filters）
+  # ----------------------------------------
+  # 對候選字詞進行過濾與處理
+  filters:
+    # 簡繁轉換過濾器
+    # 根據 simplification 開關狀態，將繁體字轉換為簡體字
+    - simplifier
+    # 去重過濾器
+    # 移除候選列表中重複的字詞
+    - uniquifier
+
+# ========================================
+# ASCII Composer 英文模式配置
+# ========================================
+ascii_composer:
+  # 啟用傳統 Caps Lock 功能
+  # true: Caps Lock 鍵恢復大寫鎖定功能，不切換中英文
+  # false: Caps Lock 鍵用於切換中英文模式
+  good_old_caps_lock: true
+  # 切換鍵行為設定
+  # noop: 不執行任何動作
+  # clear: 清除編碼
+  # inline_ascii: 切換到臨時英文模式
+  # commit_text: 上屏已輸入的文字
+  # commit_code: 上屏原始編碼
+  switch_key:
+    Caps_Lock: noop      # Caps Lock 不切換中英文
+    Control_L: noop      # 左 Ctrl 不執行動作
+    Control_R: noop      # 右 Ctrl 不執行動作
+    Shift_L: clear       # 左 Shift 清除編碼
+    Shift_R: clear       # 右 Shift 清除編碼
+
+# ========================================
+# Key Binder 按鍵綁定配置
+# ========================================
+key_binder:
+  bindings:
+    # 全形半形切換
+    # 按 Shift + 空格鍵切換全形/半形標點符號
+    - { when: always, accept: "Shift+space", toggle: full_shape }
+    # 擴充字集切換
+    # 按 Ctrl + / 切換是否顯示擴充字集(罕用字、異體字等)
+    - { when: always, accept: "Control+slash", toggle: extended_charset }
+    # 簡繁轉換
+    # 按 Ctrl + . 切換繁簡
+    - { when: always, accept: "Control+period", toggle: simplification }
+    # 輸入中按空格清空編碼
+    # 當正在輸入時,按空格鍵會清除當前的編碼緩衝區
+    - { when: composing, accept: space, send: Escape }
+    # 有選單時按空格上字
+    # 當候選列表出現時,按空格鍵會選擇首選項並上屏
+    - { when: has_menu, accept: space, send: space }
+
+# ========================================
+# Speller 拼寫處理器配置
+# ========================================
+speller:
+  # 字母表，定義哪些字符可以用於輸入
+  alphabet: "abcdefghijklmnopqrstuvwxyz[];',."
+  # 拼寫代數規則
+  # 為了加強造詞準確性，在字典中以「~」前綴標記非標準拆字，
+  # 再透過拼寫語法去除「~」後，送入辭典查詢
+  algebra:
+    - xform/^~(.*)$/$1
+  # 自動選擇【注意：這不是控制空白鍵行為】
+  # true: 當只有唯一候選項時，自動選擇該候選項
+  # false: 即使只有一個候選項，也顯示候選列表讓用戶選擇
+  auto_select: false
+  # 自動上屏（配合 max_code_length 使用）
+  # true: 當編碼達到最大長度時，自動上屏首選項
+  # false: 編碼達到最大長度時，仍需手動選字
+  auto_commit: false
+
+# ========================================
+# Translator 翻譯器配置
+# ========================================
+translator:
+  # 指定使用的字典名稱（對應 wuxia.dict.yaml）
+  dictionary: wuxia
+  # 啟用編碼補全提示
+  # true: 輸入時顯示可能的編碼補全建議
+  # false: 不顯示補全提示
+  enable_completion: true
+  # 啟用字符集過濾
+  # true: 啟用字符集過濾器,配合 charset_filter 使用
+  # false: 不過濾字符集,顯示所有候選字
+  enable_charset_filter: true
+  # 啟用用戶詞典
+  # true: 記錄和使用您輸入過的自造詞
+  # false: 不記錄用戶詞彙，每次都從字典查詢
+  enable_user_dict: false
+  # 啟用句子模式（自動組句）
+  # true: 允許連續輸入多個字的編碼，自動組成詞句
+  # false: 每次只翻譯單個字或詞，不自動組句
+  enable_sentence: false
+  # 啟用編碼器（自動造詞）
+  # true: 啟用編碼器，允許自動造詞
+  # false: 關閉編碼器，不自動造詞
+  enable_encoder: false
+  # 記錄上屏歷史用於造詞
+  # true: 記錄已上屏的字詞，用於自動造詞
+  # false: 不記錄上屏歷史
+  encode_commit_history: false
+  # 候選字詞旁的編碼提示格式化
+  # 將提示碼從 ~xxx 格式轉換為 >[xxx] 格式顯示
+  comment_format:
+    - xform/^~(.+)$/>[$1]
