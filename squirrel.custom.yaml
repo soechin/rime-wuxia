@@ -1,0 +1,17 @@
+# Squirrel (macOS) 自訂設定檔
+# 此檔案用於覆蓋 macOS 上 Rime 鼠鬚管的預設設定
+# 修改後需要「重新部署」才會生效
+
+patch:
+  # 應用程式預設行為設定
+  # ascii_mode: true 表示預設英文模式
+  # ascii_mode: false 表示預設中文模式
+  app_options:
+    # 預設所有應用程式為中文模式（透過 wuxia.schema.yaml 的 switches 設定）
+    # 以下是一些常見需要預設英文模式的應用程式範例，取消註解即可啟用
+    # com.apple.Terminal:
+    #   ascii_mode: true
+    # com.googlecode.iterm2:
+    #   ascii_mode: true
+    # com.microsoft.VSCode:
+    #   ascii_mode: true
