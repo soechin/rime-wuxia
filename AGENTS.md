@@ -1,6 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+# AGENTS.md
 
 ## 專案概述
 
@@ -58,6 +56,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - 當前導入：
     - `wuxia.trad`：繁體中文基本字典
     - `wuxia.tradext`：繁體中文擴充詞庫
+    - `wuxia.user`：使用者自訂字典
   - 定義字典名稱、版本號、排序方式
 
 - **wuxia.trad.dict.yaml**：繁體中文基本字典
@@ -65,11 +64,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - 格式：字詞[Tab]編碼[Tab]權重(可選)
   - 編碼使用無蝦輸入法編碼規則
   - 使用 `~` 前綴標記非標準拆字
+  - ⚠️ 使用者不應直接修改此檔案
 
 - **wuxia.tradext.dict.yaml**：繁體中文擴充詞庫
   - 包含擴充字集、罕用字、異體字等
   - 格式與 wuxia.trad.dict.yaml 相同
   - 提供更完整的字詞覆蓋範圍
+  - ⚠️ 使用者不應直接修改此檔案
+
+- **wuxia.user.dict.yaml**：使用者自訂字典
+  - 專為使用者個人詞彙設計
+  - 與官方字典分離，便於備份與遷移
+  - 在 import_tables 中排序最後，確保最高優先度
+  - 格式與其他字典檔相同
+  - ✅ 使用者應在此檔案中新增個人詞彙
 
 #### 3. 全域設定檔
 
@@ -113,16 +121,27 @@ Rime 採用「配置 → 部署 → 生效」的工作流程：
 3. 透過 Rime 部署功能重新載入配置
 4. 實際測試輸入法行為
 
-#### 修改字典檔
-1. 編輯字典檔（`wuxia.trad.dict.yaml` 或 `wuxia.tradext.dict.yaml`）
-2. 在碼表區域新增或修改詞條
+#### 新增使用者自訂詞彙
+1. 編輯 `wuxia.user.dict.yaml`（使用者自訂字典）
+2. 在碼表區域（`...` 之後）新增詞條
 3. 格式：**字詞[Tab]編碼[Tab]權重(可選)**
    - **重要**：必須使用 **Tab** 鍵分隔，不能使用空格
-   - 範例：`對[Tab]a` 或 `對[Tab]a[Tab]100`
+   - 範例：`範例[Tab]efaa` 或 `測試[Tab]aab[Tab]100`
 4. 若要標記非標準拆字，在編碼前加 `~` 前綴
    - 範例：`丶[Tab]~aa`
 5. 儲存檔案後，透過 Rime 部署功能重新載入
-6. 測試新增或修改的詞條是否正確顯示
+6. 測試新增的詞條是否正確顯示
+
+**注意**：
+- ⚠️ 請勿直接修改 `wuxia.trad.dict.yaml` 或 `wuxia.tradext.dict.yaml`
+- 這些是官方字典檔，應保持原樣以便日後更新
+- 所有個人詞彙請加入 `wuxia.user.dict.yaml`
+
+#### 修改官方字典（進階使用者）
+如果確實需要修改官方字典（如修正錯誤編碼）：
+1. 編輯 `wuxia.trad.dict.yaml`（常用字）或 `wuxia.tradext.dict.yaml`（擴充字）
+2. 在碼表區域新增或修改詞條
+3. 儲存檔案後重新部署並測試
 
 #### 新增字典檔
 1. 建立新的 `.dict.yaml` 檔案
@@ -171,14 +190,17 @@ Rime 採用「配置 → 部署 → 生效」的工作流程：
 
 ### 配置檔案編輯
 1. **編輯方案配置**：修改 `wuxia.schema.yaml` 或 `default.custom.yaml`
-2. **編輯字典檔**：修改 `wuxia.trad.dict.yaml` 或 `wuxia.tradext.dict.yaml`
+2. **編輯自訂字典**：修改 `wuxia.user.dict.yaml` 新增個人詞彙
 3. **驗證 YAML**：確保語法正確（可使用 YAML 驗證工具）
 4. **部署測試**：在 Rime 輸入法中執行重新部署並測試
 
+**注意**：一般使用者不應直接修改 `wuxia.trad.dict.yaml` 或 `wuxia.tradext.dict.yaml`，請使用 `wuxia.user.dict.yaml` 新增個人詞彙。
+
 ### 字典管理任務
 1. **新增單字或詞彙**：
-   - 在適當的字典檔中新增一行
+   - 在 `wuxia.user.dict.yaml` 中新增一行（建議）
    - 格式：`字詞[Tab]編碼`
+   - 範例：`範例[Tab]efaa`
    - 重新部署後測試
 
 2. **調整詞頻**：

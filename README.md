@@ -98,6 +98,7 @@ rime-wuxia/
 ├── wuxia.dict.yaml          # 主字典檔（導入其他字典）
 ├── wuxia.trad.dict.yaml     # 繁體中文基本字典
 ├── wuxia.tradext.dict.yaml  # 繁體中文擴充詞庫
+├── wuxia.user.dict.yaml     # 使用者自訂字典（您可編輯此檔）
 ├── default.custom.yaml      # Rime 全域自訂設定
 ├── AGENTS.md                # 開發者指南
 └── README.md                # 本文件
@@ -105,22 +106,42 @@ rime-wuxia/
 
 ## 開發與貢獻
 
-### 修改字典檔
+### 新增自訂詞條
 
-如果您想新增或修改字詞：
+如果您想新增個人常用詞彙，請編輯 `wuxia.user.dict.yaml`：
 
-1. 編輯 `wuxia.trad.dict.yaml`（常用字）或 `wuxia.tradext.dict.yaml`（擴充字）
-2. 在碼表區域加入新詞條，格式為：`字詞[Tab]編碼[Tab]權重(可選)`
+1. 開啟 `wuxia.user.dict.yaml` 檔案
+2. 在碼表區域（`...` 之後）加入新詞條
+3. 格式：`字詞[Tab]編碼[Tab]權重(可選)`
    - **重要**：必須使用 Tab 鍵分隔，不能用空格
-3. 儲存後重新部署 Rime
-4. 測試新詞條是否正確顯示
+   - 權重為可選，數值越大優先度越高（預設為 0）
+4. 儲存後重新部署 Rime
+5. 測試新詞條是否正確顯示
 
 範例：
 ```
-對	a
-對	a	100
-丶	~aa
+範例	efaa
+測試	aab	100
 ```
+
+**注意事項**：
+- ⚠️ 請勿直接修改 `wuxia.trad.dict.yaml` 或 `wuxia.tradext.dict.yaml`
+- 這些是官方字典檔，應保持原樣以便日後更新
+- 所有個人詞彙請加入 `wuxia.user.dict.yaml`
+
+### 備份與遷移
+
+您的自訂詞彙都儲存在 `wuxia.user.dict.yaml` 中，要備份或遷移時：
+1. 複製 `wuxia.user.dict.yaml` 到安全位置
+2. 在新系統中將此檔案放回 Rime 用戶目錄
+3. 重新部署即可恢復所有自訂詞彙
+
+### 修改官方字典（進階使用者）
+
+如果您確實需要修改官方字典：
+1. 編輯 `wuxia.trad.dict.yaml`（常用字）或 `wuxia.tradext.dict.yaml`（擴充字）
+2. 在碼表區域加入或修改詞條，格式為：`字詞[Tab]編碼[Tab]權重(可選)`
+3. 儲存後重新部署 Rime
 
 ### 修改方案配置
 

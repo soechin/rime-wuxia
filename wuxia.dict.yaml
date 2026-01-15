@@ -15,5 +15,6 @@ sort: original
 import_tables:
   - wuxia.trad
   - wuxia.tradext
+  - wuxia.user
 
 ...
