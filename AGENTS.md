@@ -29,9 +29,9 @@
       - `extended_charset`：擴充字集切換
       - `simplification`：簡繁轉換
     - `engine`：處理流程定義
-      - `processors`：按鍵處理器（ascii_composer、key_binder、speller、selector、navigator、express_editor）
+      - `processors`：按鍵處理器（ascii_composer、recognizer、key_binder、speller、selector、navigator、express_editor）
       - `segmentors`：輸入分段器（ascii_segmentor、matcher、abc_segmentor、fallback_segmentor）
-      - `translators`：翻譯器（table_translator）
+      - `translators`：翻譯器（table_translator、reverse_lookup_translator）
       - `filters`：過濾器（simplifier、uniquifier）
     - `ascii_composer`：英文模式配置
     - `key_binder`：按鍵綁定設定
@@ -47,6 +47,11 @@
       - 指定字典檔（dictionary: wuxia）
       - 編碼補全、字符集過濾
       - 用戶詞典、句子模式、編碼器相關設定
+    - `recognizer`：識別器設定
+      - 識別反查模式（`;` 開頭觸發拼音反查）
+    - `reverse_lookup`：拼音反查設定
+      - 使用 `luna_pinyin` 字典
+      - 輸入 `;` 進入拼音反查模式
 
 #### 2. 字典檔案
 

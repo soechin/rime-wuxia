@@ -18,6 +18,7 @@ schema:
     蝦米簡化版輸入法
   # 相依方案
   dependencies:
+    - luna_pinyin
 
 # ========================================
 # 功能開關設定
@@ -54,6 +55,9 @@ engine:
     # 處理英文模式及中英文切換
     # 當您按 Shift 切換到英文模式時，英文字母會直接上屏
     - ascii_composer
+    # 識別器
+    # 識別反查等特殊輸入模式
+    - recognizer
     # 按鍵綁定
     # 允許您自定義快捷鍵，例如用 , . 翻頁
     - key_binder
@@ -96,6 +100,9 @@ engine:
     # 主翻譯器
     # 查詢碼表，將您的輸入碼（如 abc）轉換成候選字（如「阿」「啊」「呵」）
     - table_translator
+    # 反查翻譯器
+    # 用拼音查找漢字並顯示無蝦編碼
+    - reverse_lookup_translator
 
   # ----------------------------------------
   # 過濾器（Filters）
@@ -129,6 +136,15 @@ ascii_composer:
     Control_R: noop      # 右 Ctrl 不執行動作
     Shift_L: clear       # 左 Shift 清除編碼
     Shift_R: clear       # 右 Shift 清除編碼
+
+# ========================================
+# Recognizer 識別器配置
+# ========================================
+# 識別特殊輸入模式（如反查）
+recognizer:
+  patterns:
+    # 以分號開頭的輸入會觸發拼音反查
+    reverse_lookup: ";[a-z]*'?$"
 
 # ========================================
 # Key Binder 按鍵綁定配置
@@ -205,3 +221,28 @@ translator:
   # 將提示碼從 ~xxx 格式轉換為 >[xxx] 格式顯示
   comment_format:
     - xform/^~(.+)$/>[$1]
+
+# ========================================
+# Reverse Lookup 反查配置
+# ========================================
+reverse_lookup:
+  # 使用朙月拼音作為反查字典
+  dictionary: luna_pinyin
+  # 反查前綴
+  # 輸入 ; 進入反查模式
+  prefix: ";"
+  # 反查後綴
+  # 選用，用於結束反查輸入
+  suffix: "'"
+  # 反查模式提示文字
+  tips: 〔拼音〕
+  # 拼音顯示格式化
+  # 將 v 顯示為 ü
+  preedit_format:
+    - xform/([nl])v/$1ü/
+    - xform/([nl])ue/$1üe/
+    - xform/([jqxy])v/$1u/
+  # 編碼提示格式化
+  # 移除非標準編碼（~ 開頭）
+  comment_format:
+    - xform/~(.+)//
