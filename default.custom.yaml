@@ -5,3 +5,6 @@
 patch:
   schema_list:
     - schema: wuxia
+  switcher/hotkeys:
+    # 按 Ctrl + Shift + ` 切換輸入法
+    - Control+Shift+grave
